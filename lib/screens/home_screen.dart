@@ -14,6 +14,7 @@ import '../data/restaurant_menu_data.dart';
 import 'reservation/reservation_models.dart';
 import 'reservation/restaurant_list_screen.dart';
 import 'reservation/reservation_done_screen.dart';
+import '../widgets/restaurant_promo_banner.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -99,13 +100,16 @@ class HomeScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                crossAxisCount: 2,
+              child: GridView(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.15,
+                // 화면이 넓어져도(웹 브라우저) 타일 높이는 150으로 고정
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  mainAxisExtent: 150,
+                ),
                 children: [
                   _ServiceTile(
                     icon: Icons.restaurant,
@@ -134,6 +138,12 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+
+            // ---------- 제휴 식당 간판 홍보 배너 ----------
+            // 위치를 옮기고 싶으면 이 3줄을 원하는 자리로 옮기면 돼요.
+            const SizedBox(height: 20),
+            const RestaurantPromoBanner(),
+
             const SizedBox(height: 24),
           ],
         ),

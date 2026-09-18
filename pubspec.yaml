@@ -18,3 +18,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # 홈 배너 간판 사진 폴더 — 여기에 사진 파일을 넣고 promo_banner_data.dart 에서 경로를 적어요
+  assets:
+    - assets/banners/
