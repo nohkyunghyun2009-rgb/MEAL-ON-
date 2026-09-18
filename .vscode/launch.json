@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "MEAL:ON (Chrome, localhost:8080)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "args": ["--web-port", "8080"]
+    },
+    {
+      "name": "예약 기능만 테스트",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_reservation_demo.dart",
+      "deviceId": "chrome",
+      "args": ["--web-port", "8080"]
+    }
+  ]
+}
