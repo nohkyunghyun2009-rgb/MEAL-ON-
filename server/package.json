@@ -1,0 +1,13 @@
+{
+  "name": "meal-on-payment-server",
+  "version": "1.0.0",
+  "description": "MEAL:ON 토스페이먼츠 결제 승인 서버 (외부 라이브러리 없음)",
+  "private": true,
+  "main": "confirm_server.js",
+  "scripts": {
+    "start": "node confirm_server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

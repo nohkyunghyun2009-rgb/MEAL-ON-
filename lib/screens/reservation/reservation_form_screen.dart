@@ -1,13 +1,18 @@
 // ============================================================
 // reservation_form_screen.dart
-// 화면 3: 예약 정보 입력 (날짜·시간·인원·이름·연락처) + 예약금 결제(모의)
+// 화면 3: 예약 정보 입력 (날짜·시간·인원·이름·연락처) + 예약금 결제
 //
-// - 예약금 = 인원 × 1,000원 (선결제, 진짜 결제는 안 되고 흉내만 냄)
-// - "결제하기"를 누르면 ReservationStore 에 저장하고 완료 화면으로 넘어가요.
+// - 예약금 = 인원 × 2,000원 (토스페이먼츠로 선결제)
+// - "결제하기"를 누르면
+//     · 웹(Chrome): 입력 내용을 보관하고 토스 결제창으로 이동 →
+//       결제 후 앱으로 돌아오면 PaymentResultScreen 이 승인·저장·완료 화면까지 처리
+//     · 모의 결제(kUseMockPayment / 테스트): 바로 저장하고 완료 화면으로
 // ============================================================
 
 import 'package:flutter/material.dart';
 import '../../data/restaurant_menu_data.dart';
+import '../../payment/payment_gateway.dart';
+import '../../payment/pending_reservation.dart';
 import 'reservation_models.dart';
 import 'reservation_done_screen.dart';
 
@@ -84,6 +89,8 @@ class _ReservationFormScreenState extends State<ReservationFormScreen> {
       return;
     }
 
+    final gateway = PaymentGateway.instance;
+
     // 2) 결제 확인창
     final ok = await showDialog<bool>(
       context: context,
@@ -91,8 +98,8 @@ class _ReservationFormScreenState extends State<ReservationFormScreen> {
         title: const Text('예약금 결제'),
         content: Text(
           '예약금 ${formatWon(_deposit)}원을 결제할까요?\n'
-          '(인원 $_people명 × 1,000원)\n\n'
-          '※ 시연용 모의 결제예요. 실제로 돈이 빠져나가지 않아요.',
+          '(인원 $_people명 × ${formatWon(kDepositPerPerson)}원)\n\n'
+          '${gateway.isReal ? '토스페이먼츠 결제창으로 이동해요.' : '※ 시연용 모의 결제예요. 실제로 돈이 빠져나가지 않아요.'}',
         ),
         actions: [
           TextButton(
@@ -110,19 +117,42 @@ class _ReservationFormScreenState extends State<ReservationFormScreen> {
     );
     if (ok != true) return;
 
-    // 3) 결제 흉내 (1.2초 기다리기)
+    // 3) 결제 요청
     setState(() => _paying = true);
-    await Future.delayed(const Duration(milliseconds: 1200));
-    if (!mounted) return;
-
-    // 4) 예약 저장
-    final reservation = ReservationStore.instance.add(
-      restaurant: widget.restaurant,
+    final pending = PendingReservation(
+      orderId: ReservationStore.instance.newOrderId(),
+      restaurantId: widget.restaurant.id,
       visitAt: _visitAt,
       people: _people,
       customerName: _nameCtrl.text.trim(),
       phone: _phoneCtrl.text.trim(),
       memo: _memoCtrl.text.trim(),
+      items: widget.cart,
+      amount: _deposit,
+    );
+    try {
+      // 진짜 결제면 여기서 토스 결제창으로 페이지가 넘어가요 (돌아오지 않음).
+      // 결제 후 앱으로 돌아오면 main.dart → PaymentResultScreen 이 이어서 처리해요.
+      await gateway.requestPayment(pending);
+    } on PaymentException catch (e) {
+      // 사용자가 결제창을 닫았거나, 결제창을 못 띄운 경우
+      if (!mounted) return;
+      setState(() => _paying = false);
+      _toast(e.isUserCancel ? '결제를 취소했어요' : '결제창을 열지 못했어요: ${e.message}');
+      return;
+    }
+    if (!mounted) return;
+    if (gateway.isReal) return; // 페이지가 넘어가는 중 — 여기서 할 일 없음
+
+    // 4) (모의 결제) 예약 저장
+    final reservation = ReservationStore.instance.add(
+      id: pending.orderId,
+      restaurant: widget.restaurant,
+      visitAt: _visitAt,
+      people: _people,
+      customerName: pending.customerName,
+      phone: pending.phone,
+      memo: pending.memo,
       items: widget.cart,
     );
 
@@ -333,7 +363,8 @@ class _ReservationFormScreenState extends State<ReservationFormScreen> {
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    '예약금은 방문하면 음식값에서 빼드려요. 노쇼 방지용이에요.',
+                    '예약금은 방문하면 음식값에서 빼드려요. 노쇼 방지용이에요.\n'
+                    '결제는 토스페이먼츠(카드·간편결제)로 안전하게 진행돼요.',
                     style: TextStyle(fontSize: 11, color: Colors.black45),
                   ),
                 ),

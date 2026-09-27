@@ -17,8 +17,8 @@ const Color kBrandGreen = Color(0xFF00B14F);
 const Color kBrandGreenDark = Color(0xFF008F3F);
 const Color kBrandGreenLight = Color(0xFFE6F7EC);
 
-/// 예약금: 1명당 1,000원 (선결제 모의 결제)
-const int kDepositPerPerson = 1000;
+/// 예약금: 1명당 2,000원 (토스페이먼츠로 선결제)
+const int kDepositPerPerson = 2000;
 
 /// 장바구니 한 줄: "크리스피치킨 × 2"
 class CartItem {
@@ -42,6 +42,8 @@ class Reservation {
   final String memo;               // 요청사항
   final List<CartItem> items;      // 미리 주문한 메뉴
   final DateTime createdAt;        // 예약한 시각
+  final String paymentKey;         // 토스 결제 키 (모의 결제면 빈 글자)
+  final String paymentMethod;      // 결제 수단 (예: 카드) — 모의 결제면 '모의 결제'
 
   Reservation({
     required this.id,
@@ -53,12 +55,17 @@ class Reservation {
     required this.memo,
     required this.items,
     required this.createdAt,
+    this.paymentKey = '',
+    this.paymentMethod = '모의 결제',
   });
+
+  /// 진짜 결제(토스)로 낸 예약인지
+  bool get isPaidForReal => paymentKey.isNotEmpty;
 
   /// 메뉴 예상 금액 (식당에서 낼 돈)
   int get menuTotal => items.fold(0, (sum, it) => sum + it.subtotal);
 
-  /// 예약금 = 인원 × 1,000원
+  /// 예약금 = 인원 × 2,000원
   int get deposit => people * kDepositPerPerson;
 
   /// 우리 회사 수수료 (음식값의 5%) — 사업 계획서용 계산
@@ -77,7 +84,18 @@ class ReservationStore {
   /// 저장된 예약 전부 (최신순)
   List<Reservation> get all => List.unmodifiable(_list.reversed.toList());
 
+  /// 새 예약번호 만들기: "MO20260927-K3F9A2B1"
+  /// 토스 주문번호(orderId)로도 그대로 써요. (6~64자, 영문·숫자·-·_ 만 가능)
+  /// 앱을 새로 켜도 겹치지 않게 시각(밀리초)을 36진수로 붙여요.
+  String newOrderId() {
+    _counter++;
+    final now = DateTime.now();
+    final stamp = now.millisecondsSinceEpoch.toRadixString(36).toUpperCase();
+    return 'MO${now.year}${_two(now.month)}${_two(now.day)}-$stamp${_counter.toRadixString(36).toUpperCase()}';
+  }
+
   /// 예약 추가하고, 만들어진 예약을 돌려줌
+  /// [id] 를 주면 그 번호로(토스 결제 후 orderId 그대로), 안 주면 새로 만들어요.
   Reservation add({
     required Restaurant restaurant,
     required DateTime visitAt,
@@ -86,13 +104,13 @@ class ReservationStore {
     required String phone,
     required String memo,
     required List<CartItem> items,
+    String? id,
+    String paymentKey = '',
+    String paymentMethod = '모의 결제',
   }) {
-    _counter++;
     final now = DateTime.now();
-    final id =
-        'MO${now.year}${_two(now.month)}${_two(now.day)}-${_counter.toString().padLeft(3, '0')}';
     final r = Reservation(
-      id: id,
+      id: id ?? newOrderId(),
       restaurant: restaurant,
       visitAt: visitAt,
       people: people,
@@ -101,6 +119,8 @@ class ReservationStore {
       memo: memo,
       items: items.map((c) => CartItem(menu: c.menu, quantity: c.quantity)).toList(),
       createdAt: now,
+      paymentKey: paymentKey,
+      paymentMethod: paymentMethod,
     );
     _list.add(r);
     return r;

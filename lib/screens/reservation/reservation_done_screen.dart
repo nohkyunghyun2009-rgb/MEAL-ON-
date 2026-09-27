@@ -79,6 +79,9 @@ class ReservationDoneScreen extends StatelessWidget {
             children: [
               _row('결제한 예약금', '${formatWon(r.deposit)}원',
                   bold: true, color: kBrandGreenDark),
+              _row('결제 수단', r.paymentMethod),
+              if (r.isPaidForReal)
+                _row('결제 키', r.paymentKey),
               const SizedBox(height: 4),
               const Text(
                 '식당에서 예약을 확인하면 알림을 보내드려요.',

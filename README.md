@@ -1,6 +1,6 @@
 # MEAL:ON — 백마 학원가 학생 식당 예약 앱
 
-제휴 식당 11곳 · 메뉴 353개가 들어있고, 메뉴를 골라서 **예약(날짜·시간·인원 + 예약금 모의 결제)** 까지 되는 Flutter 앱이에요.
+제휴 식당 11곳 · 메뉴 353개가 들어있고, 메뉴를 골라서 **예약(날짜·시간·인원 + 예약금 2,000원/인 토스페이먼츠 결제)** 까지 되는 Flutter 앱이에요.
 
 ## 실행 방법 (VS Code)
 
@@ -16,10 +16,20 @@ flutter pub get
 flutter run -d chrome --web-port 8080
 ```
 
+**결제까지 해보려면** 터미널 하나 더 열어서 결제 승인 서버도 켜요 (Node.js 필요):
+
+```bash
+cd server
+npm start
+```
+
+지금은 토스페이먼츠 **테스트 키**라 결제창은 진짜처럼 뜨지만 돈은 안 빠져나가요.
+자세한 건 `docs/결제_연동방법.md` 를 보세요.
+
 ## 화면 흐름
 
 ```
-홈 ─┬─ [식당 예약] → 식당 목록 → 메뉴 고르기(+/−) → 날짜·시간·인원·이름 → 결제(모의) → 완료
+홈 ─┬─ [식당 예약] → 식당 목록 → 메뉴 고르기(+/−) → 날짜·시간·인원·이름 → 토스 결제창 → 결제 확인 → 완료
     └─ [내 예약]   → 지금까지 한 예약 목록
 ```
 
@@ -29,6 +39,9 @@ flutter run -d chrome --web-port 8080
 lib/
  ├─ main.dart                            ← 앱 시작 (F5 누르면 이게 실행돼요)
  ├─ main_reservation_demo.dart           ← 예약 화면만 따로 켜볼 때
+ ├─ config/
+ │   └─ payment_config.dart              ← 토스 키 · 승인 서버 주소 · 모의 결제 켜기
+ ├─ payment/                             ← 결제 통로 (토스 결제창 / 승인 요청 / 입력 보관)
  ├─ data/
  │   ├─ restaurant_menu_data.dart        ← 식당·메뉴 데이터 (여기서 가격/메뉴 고쳐요)
  │   └─ promo_banner_data.dart           ← 홈 배너 내용 (문구·사진·색)
@@ -36,6 +49,8 @@ lib/
  │   └─ restaurant_promo_banner.dart     ← 홈 배너 (자동 슬라이드 광고)
  └─ screens/
      ├─ home_screen.dart                 ← 홈 (서비스 타일 + 배너)
+     ├─ payment/
+     │   └─ payment_result_screen.dart   ← 결제 후 돌아왔을 때 (승인 → 저장 → 완료)
      └─ reservation/
          ├─ reservation_models.dart      ← 장바구니·예약 데이터 + 색상·예약금 설정
          ├─ restaurant_list_screen.dart  ← 식당 목록
@@ -44,7 +59,10 @@ lib/
          └─ reservation_done_screen.dart ← 완료 / 내 예약
 assets/
  └─ banners/                             ← 식당 간판 사진 넣는 곳
+server/
+ └─ confirm_server.js                    ← 결제 승인 서버 (npm start)
 docs/
+ ├─ 결제_연동방법.md                     ← 결제 켜는 법, 구조, 실제 결제로 바꾸는 법
  ├─ README_설치방법.md                   ← 메뉴 데이터 검토 사항, 색 바꾸기 등 상세 설명
  └─ 메뉴목록_검토용.csv                  ← 메뉴 전체 목록 (엑셀로 열어서 대조)
 ```

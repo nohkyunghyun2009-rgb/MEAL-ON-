@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  http: ^1.2.0   # 결제 승인 서버에 요청 보낼 때
+  web: ^1.1.0    # 웹에서 주소창·브라우저 저장소 다룰 때 (토스 결제 리다이렉트용)
 
 dev_dependencies:
   flutter_test:
