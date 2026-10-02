@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="MEAL:ON — 청소년의 건강한 한 끼를 켜주는 AI 식단 추천 앱">
+<title>MEAL:ON</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* 레이아웃 컨셉: 크림색 식판 위에 올린 브랜드 카드 — 전원(ON) 모티프가 초록 실선으로 섹션을 꿰어 준다 */
+:root{
+  --bg:#FBF8F1;            /* 크림 (캐릭터 시트 배경) */
+  --surface:#FFFFFF;
+  --sticker:#FDFDF7;       /* 밀온이 스티커 카드: 양 테마 공통 */
+  --ink:#2C3A2E;
+  --muted:#68775F;
+  --green:#4E9E63;         /* 브랜드 그린 */
+  --green-deep:#2E6E46;
+  --green-soft:#EAF4E8;
+  --line:#E5DFCF;
+  --o:#E88434;             /* CHECK ON */
+  --b:#4A8FD3;             /* PLACE ON */
+  --p:#8E7CC3;             /* SAVE ON */
+  --shadow:0 10px 30px rgba(62,86,60,.10);
+  --disp:'Jua','Gowun Dodum',sans-serif;
+  --latin:'Fredoka','Jua',sans-serif;
+  --body:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141A14; --surface:#1D261D; --ink:#EFEDE2; --muted:#A3B29C;
+    --green:#6FC284; --green-deep:#9ADBA9; --green-soft:#223123;
+    --line:#2D3A2C; --o:#F09A54; --b:#6FA9E0; --p:#A795D6;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141A14; --surface:#1D261D; --ink:#EFEDE2; --muted:#A3B29C;
+  --green:#6FC284; --green-deep:#9ADBA9; --green-soft:#223123;
+  --line:#2D3A2C; --o:#F09A54; --b:#6FA9E0; --p:#A795D6;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--body); font-size:16.5px; line-height:1.75;
+  overflow-x:hidden;
+}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *{animation:none!important; transition:none!important}
+}
+img{max-width:100%; height:auto; display:block}
+a{color:inherit}
+.wrap{max-width:1040px; margin:0 auto; padding-inline:20px}
+
+/* ── 상단 내비 ── */
+header{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:50;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+}
+.nav{display:flex; align-items:center; gap:18px; padding-block:12px}
+.logo{display:flex; align-items:center; gap:9px; text-decoration:none}
+.pwr{
+  width:30px; height:30px; border-radius:50%; background:var(--green);
+  display:grid; place-items:center; color:#fff; flex:none;
+}
+.pwr svg{width:16px; height:16px}
+.wordmark{font-family:var(--latin); font-weight:600; font-size:1.25rem; letter-spacing:.02em}
+.wordmark em{font-style:normal; color:var(--green)}
+.nav nav{margin-left:auto; display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end}
+.nav nav a{
+  text-decoration:none; font-size:.92rem; color:var(--muted);
+  padding:6px 11px; border-radius:999px;
+}
+.nav nav a:hover{background:var(--green-soft); color:var(--green-deep)}
+
+/* ── 공통 섹션 ── */
+section{padding-block:72px}
+.eyebrow{
+  font-family:var(--latin); font-weight:600; font-size:.8rem;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--green);
+  display:flex; align-items:center; gap:10px; margin:0 0 14px;
+}
+.eyebrow::before{content:""; width:26px; height:2px; background:var(--green); border-radius:2px}
+h1,h2,h3{font-family:var(--disp); font-weight:400; line-height:1.3; text-wrap:balance; margin:0}
+h2{font-size:clamp(1.6rem, 3.4vw, 2.2rem); margin-bottom:14px}
+.lead{color:var(--muted); max-width:620px; margin:0 0 36px}
+
+/* ── 히어로 ── */
+.hero{padding-block:56px 80px}
+.hero .wrap{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:center}
+.hero-tag{
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--green-soft); color:var(--green-deep);
+  border:1px solid color-mix(in srgb, var(--green) 30%, transparent);
+  border-radius:999px; padding:5px 14px; font-size:.85rem; margin-bottom:20px;
+}
+.hero h1{font-size:clamp(2.3rem, 5.5vw, 3.5rem); margin-bottom:18px}
+.hero h1 .on{color:var(--green)}
+.hero p{color:var(--muted); max-width:30em}
+.hero-cta{display:flex; align-items:center; gap:14px; margin-top:28px; flex-wrap:wrap}
+.btn-on{
+  font-family:var(--disp); font-size:1.05rem; color:#fff;
+  background:var(--green); border:none; border-radius:999px;
+  padding:13px 26px; cursor:pointer; display:inline-flex; align-items:center; gap:10px;
+  box-shadow:0 6px 18px color-mix(in srgb, var(--green) 40%, transparent);
+  transition:transform .15s ease;
+}
+.btn-on:hover{transform:translateY(-2px)}
+.btn-on:focus-visible,.nav a:focus-visible{outline:3px solid var(--green); outline-offset:2px}
+.demo-note{font-size:.82rem; color:var(--muted)}
+
+.mascot-card{
+  background:var(--sticker); border:1px solid var(--line); border-radius:28px;
+  padding:26px 26px 18px; box-shadow:var(--shadow); position:relative;
+}
+.mascot-card img{width:min(100%, 380px); margin:0 auto}
+.bubble{
+  background:var(--surface); border:2px solid var(--green);
+  border-radius:18px; padding:13px 16px; margin-top:14px;
+  font-size:.95rem; line-height:1.6; position:relative; min-height:3.2em;
+}
+.bubble::before{
+  content:""; position:absolute; top:-11px; left:46px;
+  width:18px; height:18px; background:var(--surface);
+  border-left:2px solid var(--green); border-top:2px solid var(--green);
+  transform:rotate(45deg);
+}
+.bubble strong{font-family:var(--disp); font-weight:400; color:var(--green-deep)}
+.bubble .kcal{
+  font-family:var(--latin); font-weight:600; font-size:.78rem;
+  background:var(--green-soft); color:var(--green-deep);
+  padding:2px 9px; border-radius:999px; margin-left:6px; white-space:nowrap;
+}
+.bubble.pop{animation:pop .3s ease}
+@keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+
+/* ── 문제 ── */
+.cards{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:20px;
+  padding:24px 22px; min-width:0;
+}
+.card .ico{font-size:1.7rem; line-height:1; margin-bottom:14px}
+.card h3{font-size:1.12rem; margin-bottom:8px}
+.card p{margin:0; color:var(--muted); font-size:.95rem}
+.callout{
+  margin-top:26px; padding:18px 22px; border-radius:16px;
+  background:var(--green-soft); color:var(--green-deep);
+  border-left:4px solid var(--green); font-size:.98rem;
+}
+
+/* ── 서비스 흐름 ── */
+.flow{display:grid; gap:0}
+.step{
+  display:grid; grid-template-columns:56px 1fr; gap:18px; align-items:start;
+  padding-block:20px; border-bottom:1px dashed var(--line);
+}
+.step:last-child{border-bottom:none}
+.step .num{
+  width:44px; height:44px; border-radius:50%;
+  background:var(--surface); border:2px solid var(--green);
+  display:grid; place-items:center;
+  font-family:var(--latin); font-weight:600; color:var(--green); font-size:.95rem;
+}
+.step h3{font-size:1.1rem; margin-bottom:4px}
+.step p{margin:0; color:var(--muted); font-size:.95rem; max-width:48em}
+.step .chip{
+  display:inline-block; font-size:.74rem; font-family:var(--latin); font-weight:600;
+  letter-spacing:.04em; color:var(--green-deep); background:var(--green-soft);
+  border-radius:999px; padding:2px 10px; margin-left:8px; vertical-align:2px;
+}
+
+/* ── 4가지 모드 ── */
+.modes{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+.mode{
+  border-radius:20px; padding:20px 18px; min-width:0;
+  background:color-mix(in srgb, var(--mc) 10%, var(--surface));
+  border:1px solid color-mix(in srgb, var(--mc) 35%, transparent);
+}
+.mode .m-ico{
+  width:36px; height:36px; border-radius:50%; background:var(--mc); color:#fff;
+  display:grid; place-items:center; margin-bottom:12px;
+}
+.mode .m-ico svg{width:18px; height:18px}
+.mode h3{font-family:var(--latin); font-weight:600; font-size:1rem; color:var(--mc); margin-bottom:6px}
+.mode p{margin:0; font-size:.92rem; color:var(--muted)}
+
+/* ── 밀온이 소개 ── */
+.profile{display:grid; grid-template-columns:.9fr 1.1fr; gap:40px; align-items:center}
+.faces{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px}
+.face{
+  background:var(--sticker); border:1px solid var(--line); border-radius:16px;
+  padding:10px 10px 6px; text-align:center; width:96px;
+}
+.face img{height:96px; width:auto; margin:0 auto}
+.face span{font-size:.8rem; color:var(--muted)}
+.traits{display:grid; gap:14px}
+.trait{
+  display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start;
+  background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px 18px;
+}
+.trait .t-ico{font-size:1.4rem; line-height:1.4}
+.trait h3{font-size:1.02rem; margin-bottom:2px}
+.trait p{margin:0; color:var(--muted); font-size:.94rem}
+
+/* ── 차별성 ── */
+.why{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+.why .card .swap{
+  display:flex; align-items:center; gap:8px; margin-bottom:12px;
+  font-size:.85rem; font-family:var(--latin); font-weight:500;
+}
+.swap .old{color:var(--muted); text-decoration:line-through}
+.swap .arrow{color:var(--green)}
+.swap .new{color:var(--green-deep); font-weight:600}
+
+/* ── 수익 모델 ── */
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:34px}
+.stat{
+  background:var(--surface); border:1px solid var(--line); border-radius:20px;
+  padding:20px; text-align:center;
+}
+.stat .n{
+  font-family:var(--latin); font-weight:600; font-size:2.2rem; color:var(--green);
+  font-variant-numeric:tabular-nums; line-height:1.2;
+}
+.stat .l{font-size:.88rem; color:var(--muted)}
+.rev{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+
+/* ── 홍보 밴드 ── */
+.band{
+  background:var(--green-soft); border-block:1px solid var(--line); padding-block:40px;
+}
+.band .wrap{display:flex; gap:20px; align-items:center; flex-wrap:wrap}
+.band p{margin:0; color:var(--green-deep)}
+.band .tags{display:flex; gap:8px; flex-wrap:wrap; margin-left:auto}
+.band .tag{
+  background:var(--surface); border:1px solid var(--line); border-radius:999px;
+  padding:5px 14px; font-size:.85rem; color:var(--muted);
+}
+
+/* ── 팀 ── */
+.team{display:flex; gap:14px; flex-wrap:wrap}
+.member{
+  display:flex; align-items:center; gap:12px;
+  background:var(--surface); border:1px solid var(--line); border-radius:999px;
+  padding:9px 20px 9px 10px;
+}
+.member .avatar{
+  width:40px; height:40px; border-radius:50%; color:#fff;
+  display:grid; place-items:center; font-family:var(--disp); font-size:1.05rem;
+}
+.member .name{font-size:.97rem}
+.member .role{
+  font-size:.72rem; font-family:var(--latin); font-weight:600; letter-spacing:.06em;
+  color:var(--green-deep); background:var(--green-soft);
+  border-radius:999px; padding:2px 9px; margin-left:2px;
+}
+
+/* ── 푸터 ── */
+footer{background:var(--surface); border-top:1px solid var(--line); padding-block:52px 40px}
+.foot{display:grid; grid-template-columns:auto 1fr; gap:26px; align-items:center}
+.foot .sticker{
+  background:var(--sticker); border:1px solid var(--line); border-radius:20px; padding:12px;
+}
+.foot .sticker img{width:110px}
+.foot blockquote{margin:0; font-family:var(--disp); font-size:1.25rem; line-height:1.6}
+.foot blockquote .on{color:var(--green)}
+.foot .small{color:var(--muted); font-size:.85rem; margin-top:12px}
+
+/* ── 반응형 ── */
+@media (max-width: 860px){
+  section{padding-block:56px}
+  .hero .wrap{grid-template-columns:1fr; gap:34px}
+  .cards,.why,.rev,.modes,.stats{grid-template-columns:1fr 1fr}
+  .profile{grid-template-columns:1fr}
+}
+@media (max-width: 560px){
+  .cards,.why,.rev,.modes,.stats{grid-template-columns:1fr}
+  .nav nav{display:none}
+  .foot{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top" aria-label="MEAL:ON 홈">
+      <span class="pwr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 6.5a8 8 0 1 0 11.4 0"/></svg></span>
+      <span class="wordmark">MEAL<em>:ON</em></span>
+    </a>
+    <nav>
+      <a href="#problem">문제</a>
+      <a href="#service">서비스</a>
+      <a href="#mealon">밀온이</a>
+      <a href="#why">차별성</a>
+      <a href="#model">수익 모델</a>
+      <a href="#team">팀</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- 히어로 -->
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="hero-tag">청소년 건강 식단 플랫폼</span>
+        <h1>오늘의 한 끼,<br>밀<span class="on">온</span>!</h1>
+        <p>짧은 학원가 점심시간, 더 이상 편의점으로 때우지 마세요.
+        MEAL:ON은 AI가 학생의 건강 상태에 맞는 메뉴를 추천하고,
+        학원가 가맹 식당에 미리 예약해 <b>도착 즉시</b> 식사할 수 있게 해주는 앱입니다.</p>
+        <div class="hero-cta">
+          <button class="btn-on" id="demoBtn" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 6.5a8 8 0 1 0 11.4 0"/></svg>
+            밀온 켜보기
+          </button>
+          <span class="demo-note">버튼을 누르면 밀온이가 메뉴를 추천해요 (데모 예시)</span>
+        </div>
+      </div>
+      <div class="mascot-card">
+        <img src="img/hero.png" alt="숟가락과 영양소 카드를 든 MEAL:ON 마스코트 밀온이" width="520" height="607">
+        <div class="bubble" id="bubble" aria-live="polite">
+          <strong>안녕! 나는 밀온이야 🍚</strong><br>
+          전원 버튼을 누르면 오늘의 한 끼를 추천해 줄게!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 문제 -->
+  <section id="problem">
+    <div class="wrap">
+      <p class="eyebrow">We found a problem</p>
+      <h2>학원가의 점심시간은 너무 짧아요</h2>
+      <p class="lead">학원가 학생들의 식사 시간을 들여다보면, 문제는 늘 같은 자리에서 반복되고 있었어요.</p>
+      <div class="cards">
+        <div class="card">
+          <div class="ico">⏱️</div>
+          <h3>몰리는 식당, 길어지는 대기</h3>
+          <p>점심·저녁 시간이 짧은데 학생들이 한 식당으로 몰려, 주문 후 음식이 나올 때까지 시간이 다 지나가 버려요.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🍟</div>
+          <h3>결국 편의점과 패스트푸드</h3>
+          <p>기다릴 수 없으니 대기 없이 먹을 수 있는 편의점, 패스트푸드, 고당분 음료로 끼니를 때우게 돼요.</p>
+        </div>
+        <div class="card">
+          <div class="ico">⚖️</div>
+          <h3>반복될수록 나빠지는 건강</h3>
+          <p>불균형한 식습관이 반복되며 청소년 비만과 건강 악화로 이어지는데, 정작 내 건강 상태를 확인할 기회는 드물어요.</p>
+        </div>
+      </div>
+      <div class="callout">
+        그래서 저희는 <b>시간</b>과 <b>건강</b>을 한 번에 해결하기로 했어요 —
+        학생의 건강 관리와 학부모의 자녀 관리, 두 가지 니즈를 함께 담아서요.
+      </div>
+    </div>
+  </section>
+
+  <!-- 서비스 -->
+  <section id="service">
+    <div class="wrap">
+      <p class="eyebrow">Our service</p>
+      <h2>기다림 없는 건강한 한 끼, 이렇게 켜져요</h2>
+      <p class="lead">측정부터 식사, 소비 리포트까지 — MEAL:ON 앱 하나로 이어지는 흐름이에요.</p>
+      <div class="flow">
+        <div class="step">
+          <span class="num">01</span>
+          <div><h3>인바디 측정</h3><p>부스와 제휴 기기에서 체성분을 측정해 내 몸 상태를 객관적으로 확인해요.</p></div>
+        </div>
+        <div class="step">
+          <span class="num">02</span>
+          <div><h3>건강 상태 입력</h3><p>측정 결과와 목표 칼로리, 건강 정보를 앱에 입력하면 개인별 프로필이 완성돼요.</p></div>
+        </div>
+        <div class="step">
+          <span class="num">03</span>
+          <div><h3>AI 메뉴 추천<span class="chip">AI API 연동</span></h3><p>AI가 칼로리와 영양 요소를 분석해 지금 나에게 필요한 메뉴를 추천해요.</p></div>
+        </div>
+        <div class="step">
+          <span class="num">04</span>
+          <div><h3>학원가 가맹점 예약</h3><p>단순 반경 검색이 아닌 <b>학원가 단위</b>로 가맹 식당을 매칭하고 미리 예약 — 도착하면 바로 식사할 수 있어요.</p></div>
+        </div>
+        <div class="step">
+          <span class="num">05</span>
+          <div><h3>체크카드 리포트</h3><p>청소년 전용 체크카드 연동으로 식사와 소비 내역을 리포트로 돌아봐요.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4가지 모드 -->
+  <section id="modes" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow">4 modes</p>
+      <h2>밀온이의 4가지 모드</h2>
+      <p class="lead">앱 안에서 밀온이는 네 가지 모드로 하루를 함께해요.</p>
+      <div class="modes">
+        <div class="mode" style="--mc:var(--green)">
+          <div class="m-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 14h16a8 8 0 0 1-16 0Z"/><path d="M8 10c0-2 1-2 1-4M13 10c0-2 1-2 1-4"/></svg></div>
+          <h3>MEAL ON</h3><p>오늘의 메뉴 추천</p>
+        </div>
+        <div class="mode" style="--mc:var(--o)">
+          <div class="m-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg></div>
+          <h3>CHECK ON</h3><p>나의 식습관 분석</p>
+        </div>
+        <div class="mode" style="--mc:var(--b)">
+          <div class="m-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></div>
+          <h3>PLACE ON</h3><p>학원가 음식점 추천·예약</p>
+        </div>
+        <div class="mode" style="--mc:var(--p)">
+          <div class="m-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/></svg></div>
+          <h3>SAVE ON</h3><p>합리적인 소비와 혜택</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 밀온이 -->
+  <section id="mealon">
+    <div class="wrap">
+      <p class="eyebrow">Meet our friend</p>
+      <h2>안녕, 나는 밀온이야!</h2>
+      <p class="lead">청소년의 건강한 한 끼를 켜주는 AI 친구 — MEAL:ON의 얼굴이에요.</p>
+      <div class="profile">
+        <div>
+          <div class="traits">
+            <div class="trait">
+              <span class="t-ico">😊</span>
+              <div><h3>성격</h3><p>친절하고 똑똑해요! 건강한 한 끼를 도와주는 든든한 친구예요.</p></div>
+            </div>
+            <div class="trait">
+              <span class="t-ico">❤️</span>
+              <div><h3>좋아하는 것</h3><p>맛있는 음식, 영양 가득한 식사, 그리고 친구들의 건강한 하루!</p></div>
+            </div>
+            <div class="trait">
+              <span class="t-ico">⭐</span>
+              <div><h3>꿈</h3><p>모든 청소년이 건강하고 행복한 식생활을 실천하는 것!</p></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="faces">
+            <div class="face"><img src="img/hello.png" alt="손을 흔드는 밀온이"><span>안녕!</span></div>
+            <div class="face"><img src="img/think.png" alt="고민하는 밀온이"><span>고민 중…</span></div>
+            <div class="face"><img src="img/best.png" alt="두 팔을 든 밀온이"><span>최고야!</span></div>
+            <div class="face"><img src="img/cheer.png" alt="하트를 든 밀온이"><span>응원해!</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 차별성 -->
+  <section id="why" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow">Why MEAL:ON</p>
+      <h2>기존 방식과 무엇이 다를까요?</h2>
+      <div class="why">
+        <div class="card">
+          <div class="swap"><span class="old">배달 앱</span><span class="arrow">→</span><span class="new">MEAL:ON</span></div>
+          <h3>대기 0분, 쓰레기 0개</h3>
+          <p>배달을 기다리는 대신 도착 즉시 조리된 음식을 받아요. 점심시간을 온전히 쓰고, 배달 용기 쓰레기도 생기지 않아요.</p>
+        </div>
+        <div class="card">
+          <div class="swap"><span class="old">단순 포장·테이크아웃</span><span class="arrow">→</span><span class="new">MEAL:ON</span></div>
+          <h3>AI가 고르는 균형 잡힌 메뉴</h3>
+          <p>그냥 손에 잡히는 메뉴가 아니라, AI가 건강 상태와 칼로리를 분석해 추천하니 편식과 영양 불균형까지 개선돼요.</p>
+        </div>
+        <div class="card">
+          <div class="swap"><span class="old">현금 용돈</span><span class="arrow">→</span><span class="new">MEAL:ON</span></div>
+          <h3>체크카드로 배우는 소비 습관</h3>
+          <p>청소년 전용 체크카드를 앱과 연동해 일정 금액을 채워 넣고 차감하며, 스스로 합리적인 소비 습관을 만들어요.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 수익 모델 -->
+  <section id="model">
+    <div class="wrap">
+      <p class="eyebrow">Business model</p>
+      <h2>학생도, 식당도 함께 좋아지는 구조</h2>
+      <p class="lead">학생은 대기 시간을 줄이고, 학원가 식당은 회전율과 매출이 올라가요. 그 사이에서 MEAL:ON은 이렇게 수익을 만들어요.</p>
+      <div class="stats">
+        <div class="stat"><div class="n">5%</div><div class="l">가맹점 예약 결제 수수료</div></div>
+        <div class="stat"><div class="n">0분</div><div class="l">도착 후 대기 시간 목표</div></div>
+        <div class="stat"><div class="n">0개</div><div class="l">배달 용기 쓰레기</div></div>
+      </div>
+      <div class="rev">
+        <div class="card">
+          <div class="ico">🧾</div>
+          <h3>예약 수수료</h3>
+          <p>가맹점 예약 결제액의 5%를 수수료로 받아요. 예약이 쌓일수록 식당 회전율도 함께 올라가는 구조예요.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🎟️</div>
+          <h3>가맹점 제휴 쿠폰·캐시백</h3>
+          <p>목표 칼로리를 달성한 학생에게 가맹점 할인 쿠폰과 캐시백을 지급해요. 신규 고객 유입 효과가 있어 가맹점이 광고비 대신 부담해요.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🎡</div>
+          <h3>리워드형 광고</h3>
+          <p>광고를 보면 포인트를 얻고 룰렛을 돌릴 수 있는 포인트제로, 광고 수익과 사용자 참여를 함께 만들어요.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 홍보 -->
+  <div class="band">
+    <div class="wrap">
+      <p><b>캠페인도 켭니다.</b> 인스타그램·틱톡 챌린지로 청소년 건강 인식을 알리고, 학생들이 매일 쓰는 앱에서 MEAL:ON을 만나요.</p>
+      <div class="tags">
+        <span class="tag">#인스타그램 챌린지</span>
+        <span class="tag">#틱톡 숏폼</span>
+        <span class="tag">열품타 · 콴다 · 토스 광고</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 팀 -->
+  <section id="team">
+    <div class="wrap">
+      <p class="eyebrow">Our team</p>
+      <h2>팀원을 소개합니다</h2>
+      <p class="lead">문제를 발견하고, 밀온이를 만든 여섯 명이에요.</p>
+      <div class="team">
+        <div class="member"><span class="avatar" style="background:var(--green)">경</span><span class="name">노경현</span><span class="role">LEADER</span></div>
+        <div class="member"><span class="avatar" style="background:var(--o)">서</span><span class="name">박서우</span></div>
+        <div class="member"><span class="avatar" style="background:var(--b)">재</span><span class="name">유재이</span></div>
+        <div class="member"><span class="avatar" style="background:var(--p)">주</span><span class="name">브와주한</span></div>
+        <div class="member"><span class="avatar" style="background:var(--o)">윤</span><span class="name">이윤서</span></div>
+        <div class="member"><span class="avatar" style="background:var(--b)">율</span><span class="name">이서율</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="sticker"><img src="img/wink.png" alt="하트를 그리며 윙크하는 밀온이" width="164" height="164"></div>
+    <div>
+      <blockquote>
+        "바쁜 하루 속에서도 건강한 한 끼는 중요해요!<br>
+        밀온이가 여러분의 선택을 도와줄게요.<br>
+        함께 더 건강한 내일을 켜요! <span class="on">ON!</span>"
+      </blockquote>
+      <p class="small">© 2026 MEAL:ON — 본 페이지는 학생 창업 프로젝트 소개용입니다.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// 히어로 데모: 밀온이가 예시 메뉴를 순환 추천
+const menus = [
+  {name:'닭가슴살 덮밥', kcal:'약 540kcal', say:'단백질 충전! 오후 수업도 든든하게 💪'},
+  {name:'두부 비빔밥', kcal:'약 520kcal', say:'나트륨은 낮추고 포만감은 높였어 🥗'},
+  {name:'고등어구이 정식', kcal:'약 610kcal', say:'오메가3로 집중력까지 ON! 🐟'},
+  {name:'닭가슴살 샐러드 + 바나나', kcal:'약 400kcal', say:'가볍게, 하지만 빈틈없이 🍌'}
+];
+let i = -1;
+const bubble = document.getElementById('bubble');
+document.getElementById('demoBtn').addEventListener('click', () => {
+  i = (i + 1) % menus.length;
+  const m = menus[i];
+  bubble.innerHTML =
+    '<strong>오늘의 추천 · ' + m.name + '</strong><span class="kcal">' + m.kcal + '</span><br>' +
+    m.say + ' 지금 예약하면 대기 0분!';
+  bubble.classList.remove('pop');
+  void bubble.offsetWidth;
+  bubble.classList.add('pop');
+});
+</script>
+
+</body>
+</html>
