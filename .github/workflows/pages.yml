@@ -4,7 +4,7 @@ name: Deploy MEAL:ON (site + app)
 # 앱 주소: https://nohkyunghyun2009-rgb.github.io/MEAL-ON-/app/   (QR 코드가 이 주소를 가리켜요)
 on:
   push:
-    branches: ["claude/localhost-app-github-backup-60ge7t", "claude/great-archimedes-ll4n7g", "main"]
+    branches: ["claude/localhost-app-github-backup-60ge7t", "main"]
   workflow_dispatch:
 
 permissions:
