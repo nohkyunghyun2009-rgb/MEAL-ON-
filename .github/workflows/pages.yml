@@ -1,8 +1,10 @@
-name: Deploy MEAL:ON site
+name: Deploy MEAL:ON (site + app)
 
+# 이 브랜치들에 push 하면 자동으로 ① 소개 사이트 ② Flutter 웹앱을 빌드해서 GitHub Pages에 올려요.
+# 앱 주소: https://nohkyunghyun2009-rgb.github.io/MEAL-ON-/app/   (QR 코드가 이 주소를 가리켜요)
 on:
   push:
-    branches: ["claude/localhost-app-github-backup-60ge7t"]
+    branches: ["claude/localhost-app-github-backup-60ge7t", "claude/great-archimedes-ll4n7g", "main"]
   workflow_dispatch:
 
 permissions:
@@ -15,18 +17,72 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Flutter 설치
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # 열쇠 파일은 GitHub에 안 올리고, 저장소 Settings → Secrets 에 넣어둔 값으로 빌드할 때 만들어요.
+      # (Settings → Secrets and variables → Actions → New repository secret)
+      #   GEMINI_API_KEY, KAKAO_REST_API_KEY, KAKAO_JS_KEY, (선택) CLAUDE_API_KEY
+      - name: 열쇠 파일 만들기 (Secrets → app_keys.dart)
+        working-directory: app
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_JS_KEY: ${{ secrets.KAKAO_JS_KEY }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+        run: |
+          cp lib/config/app_keys.example.dart lib/config/app_keys.dart
+          python3 - <<'PY'
+          import os, re
+          p = 'lib/config/app_keys.dart'
+          s = open(p, encoding='utf-8').read()
+          def put(name, value):
+              global s
+              if value:
+                  s = re.sub(r"(static const String %s = ')[^']*(';)" % name, lambda m: m.group(1) + value + m.group(2), s)
+          put('geminiApiKey', os.environ.get('GEMINI_API_KEY', ''))
+          put('kakaoRestApiKey', os.environ.get('KAKAO_REST_API_KEY', ''))
+          put('kakaoJavascriptKey', os.environ.get('KAKAO_JS_KEY', ''))
+          put('claudeApiKey', os.environ.get('CLAUDE_API_KEY', ''))
+          open(p, 'w', encoding='utf-8').write(s)
+          missing = [n for n, v in [('GEMINI_API_KEY', os.environ.get('GEMINI_API_KEY')), ('KAKAO_REST_API_KEY', os.environ.get('KAKAO_REST_API_KEY')), ('KAKAO_JS_KEY', os.environ.get('KAKAO_JS_KEY'))] if not v]
+          print('비어 있는 Secret:', missing or '없음 (전부 들어감)')
+          PY
+
+      - name: 패키지 받기 + 테스트
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter test
+
+      - name: 웹앱 빌드
+        working-directory: app
+        run: flutter build web --release --base-href "/MEAL-ON-/app/"
+
+      - name: 사이트 + 앱 합치기
+        run: |
+          mkdir -p out
+          cp -r site/* out/
+          mkdir -p out/app
+          cp -r app/build/web/* out/app/
+          touch out/.nojekyll
+
       - uses: actions/configure-pages@v5
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: out
       - id: deployment
         uses: actions/deploy-pages@v4

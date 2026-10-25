@@ -1,0 +1,13 @@
+# 열쇠(키) 파일은 절대 올리지 않아요 — app_keys.example.dart 를 복사해서 app_keys.dart 로 만들어 쓰세요
+lib/config/app_keys.dart
+google-services.json
+GoogleService-Info.plist
+.dart_tool/
+build/
+.idea/
+*.iml
+.flutter-plugins
+.flutter-plugins-dependencies
+ios/Pods/
+ios/.symlinks/
+android/.gradle/

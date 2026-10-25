@@ -1,0 +1,31 @@
+name: hankki
+description: 청소년 건강 식단 추천 앱 - 한끼
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.2          # 앱의 "기억 상자" (화면들끼리 데이터 공유)
+  shared_preferences: ^2.3.2 # 폰 안에 저장 (앱 껐다 켜도 남아요)
+  http: ^1.2.2              # 인터넷으로 Claude / 카카오에 요청 보내기
+  geolocator: ^13.0.1       # 내 위치(GPS) 알아내기
+  flutter_map: ^7.0.0       # 지도 그리기 (OpenStreetMap, 웹/폰 모두 OK)
+  latlong2: ^0.9.1          # 위도/경도 좌표 타입
+  firebase_core: ^3.6.0     # Firebase 연결
+  cloud_firestore: ^5.4.4   # Firebase 데이터베이스 (예약 저장)
+  firebase_auth: ^5.3.1     # Firebase 로그인 (이메일/비밀번호)
+  url_launcher: ^6.3.1      # 메일 앱 열기 (mailto)
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/characters/
