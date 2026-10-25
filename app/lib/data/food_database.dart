@@ -1,0 +1,218 @@
+import '../models/nutrition.dart';
+
+/// 학생들이 자주 먹는 음식 목록 (1인분 기준, 대략적인 값)
+/// 숫자는 식품의약품안전처 식품영양성분 DB와 프랜차이즈 공개 정보를 참고한 "평균" 값이에요.
+/// 제휴 식당 메뉴판을 조사하면 여기에 그 가게 메뉴를 추가하면 돼요.
+class FoodDatabase {
+  static const categories = ['전체', '밥', '면', '분식', '패스트푸드', '편의점', '샐러드', '음료', '간식'];
+
+  static const List<FoodItem> all = [
+    // ───── 밥 ─────
+    FoodItem(name: '김치찌개 백반', category: '밥', kcal: 620, carbG: 85, proteinG: 28, fatG: 18, sodiumMg: 1900),
+    FoodItem(name: '된장찌개 백반', category: '밥', kcal: 580, carbG: 84, proteinG: 25, fatG: 14, sodiumMg: 1700),
+    FoodItem(name: '제육덮밥', category: '밥', kcal: 750, carbG: 95, proteinG: 32, fatG: 24, sodiumMg: 1500),
+    FoodItem(name: '불고기덮밥', category: '밥', kcal: 700, carbG: 98, proteinG: 30, fatG: 18, sodiumMg: 1300),
+    FoodItem(name: '치킨마요덮밥', category: '밥', kcal: 820, carbG: 100, proteinG: 28, fatG: 32, sodiumMg: 1400),
+    FoodItem(name: '연어덮밥', category: '밥', kcal: 640, carbG: 88, proteinG: 30, fatG: 18, sodiumMg: 900),
+    FoodItem(name: '비빔밥', category: '밥', kcal: 600, carbG: 90, proteinG: 20, fatG: 16, sodiumMg: 1100),
+    FoodItem(name: '돈까스 정식', category: '밥', kcal: 900, carbG: 100, proteinG: 35, fatG: 38, sodiumMg: 1400),
+    FoodItem(name: '김밥 1줄', category: '밥', kcal: 480, carbG: 75, proteinG: 14, fatG: 13, sodiumMg: 1000),
+    FoodItem(name: '참치김밥 1줄', category: '밥', kcal: 550, carbG: 72, proteinG: 18, fatG: 20, sodiumMg: 1100),
+    FoodItem(name: '흰밥 한 공기', category: '밥', kcal: 300, carbG: 66, proteinG: 5, fatG: 1, sodiumMg: 5),
+    FoodItem(name: '규동(소고기덮밥)', category: '밥', kcal: 690, carbG: 92, proteinG: 26, fatG: 22, sodiumMg: 1300),
+    FoodItem(name: '카레라이스', category: '밥', kcal: 680, carbG: 105, proteinG: 16, fatG: 18, sodiumMg: 1200),
+    FoodItem(name: '볶음밥', category: '밥', kcal: 700, carbG: 95, proteinG: 18, fatG: 24, sodiumMg: 1300),
+
+    // ───── 면 ─────
+    FoodItem(name: '잔치국수', category: '면', kcal: 480, carbG: 88, proteinG: 15, fatG: 6, sodiumMg: 1800),
+    FoodItem(name: '칼국수', category: '면', kcal: 560, carbG: 95, proteinG: 20, fatG: 8, sodiumMg: 2000),
+    FoodItem(name: '냉면', category: '면', kcal: 520, carbG: 95, proteinG: 18, fatG: 6, sodiumMg: 1600),
+    FoodItem(name: '짜장면', category: '면', kcal: 800, carbG: 120, proteinG: 22, fatG: 24, sodiumMg: 1500),
+    FoodItem(name: '짬뽕', category: '면', kcal: 700, carbG: 100, proteinG: 28, fatG: 18, sodiumMg: 2400),
+    FoodItem(name: '라면', category: '면', kcal: 500, carbG: 78, proteinG: 10, fatG: 16, sodiumMg: 1800),
+    FoodItem(name: '우동', category: '면', kcal: 450, carbG: 85, proteinG: 14, fatG: 4, sodiumMg: 1900),
+    FoodItem(name: '파스타(크림)', category: '면', kcal: 850, carbG: 95, proteinG: 24, fatG: 40, sodiumMg: 1100),
+    FoodItem(name: '파스타(토마토)', category: '면', kcal: 620, carbG: 90, proteinG: 20, fatG: 18, sodiumMg: 1000),
+
+    // ───── 분식 ─────
+    FoodItem(name: '떡볶이 1인분', category: '분식', kcal: 480, carbG: 95, proteinG: 8, fatG: 6, sodiumMg: 1300),
+    FoodItem(name: '순대 1인분', category: '분식', kcal: 380, carbG: 50, proteinG: 14, fatG: 13, sodiumMg: 800),
+    FoodItem(name: '튀김 3개', category: '분식', kcal: 350, carbG: 38, proteinG: 6, fatG: 20, sodiumMg: 450),
+    FoodItem(name: '라볶이', category: '분식', kcal: 620, carbG: 110, proteinG: 12, fatG: 14, sodiumMg: 1900),
+    FoodItem(name: '어묵 2개', category: '분식', kcal: 150, carbG: 16, proteinG: 8, fatG: 6, sodiumMg: 700),
+    FoodItem(name: '만두 6개', category: '분식', kcal: 420, carbG: 45, proteinG: 16, fatG: 19, sodiumMg: 900),
+
+    // ───── 패스트푸드 ─────
+    FoodItem(name: '햄버거(불고기)', category: '패스트푸드', kcal: 480, carbG: 55, proteinG: 18, fatG: 20, sodiumMg: 800),
+    FoodItem(name: '햄버거(치즈)', category: '패스트푸드', kcal: 520, carbG: 45, proteinG: 25, fatG: 26, sodiumMg: 1000),
+    FoodItem(name: '햄버거 세트', category: '패스트푸드', kcal: 950, carbG: 115, proteinG: 28, fatG: 42, sodiumMg: 1500),
+    FoodItem(name: '감자튀김(중)', category: '패스트푸드', kcal: 330, carbG: 42, proteinG: 4, fatG: 16, sodiumMg: 250),
+    FoodItem(name: '후라이드치킨 3조각', category: '패스트푸드', kcal: 700, carbG: 30, proteinG: 45, fatG: 42, sodiumMg: 1200),
+    FoodItem(name: '피자 2조각', category: '패스트푸드', kcal: 560, carbG: 60, proteinG: 24, fatG: 24, sodiumMg: 1200),
+    FoodItem(name: '핫도그', category: '패스트푸드', kcal: 330, carbG: 32, proteinG: 10, fatG: 18, sodiumMg: 700),
+
+    // ───── 편의점 ─────
+    FoodItem(name: '삼각김밥', category: '편의점', kcal: 180, carbG: 36, proteinG: 4, fatG: 2, sodiumMg: 400),
+    FoodItem(name: '편의점 도시락', category: '편의점', kcal: 750, carbG: 95, proteinG: 25, fatG: 28, sodiumMg: 1500),
+    FoodItem(name: '샌드위치', category: '편의점', kcal: 350, carbG: 38, proteinG: 14, fatG: 15, sodiumMg: 650),
+    FoodItem(name: '컵라면(작은 것)', category: '편의점', kcal: 300, carbG: 45, proteinG: 6, fatG: 11, sodiumMg: 1300),
+    FoodItem(name: '닭가슴살 100g', category: '편의점', kcal: 110, carbG: 1, proteinG: 22, fatG: 2, sodiumMg: 350),
+    FoodItem(name: '삶은 계란 2개', category: '편의점', kcal: 150, carbG: 1, proteinG: 13, fatG: 10, sodiumMg: 130),
+    FoodItem(name: '우유 200ml', category: '편의점', kcal: 125, carbG: 10, proteinG: 6, fatG: 7, sodiumMg: 100),
+    FoodItem(name: '바나나 1개', category: '편의점', kcal: 100, carbG: 25, proteinG: 1, fatG: 0, sodiumMg: 1),
+
+    // ───── 샐러드 / 포케 ─────
+    FoodItem(name: '닭가슴살 샐러드', category: '샐러드', kcal: 380, carbG: 25, proteinG: 32, fatG: 16, sodiumMg: 600),
+    FoodItem(name: '연어 포케', category: '샐러드', kcal: 560, carbG: 65, proteinG: 28, fatG: 20, sodiumMg: 700),
+    FoodItem(name: '두부 샐러드', category: '샐러드', kcal: 320, carbG: 22, proteinG: 18, fatG: 18, sodiumMg: 500),
+    FoodItem(name: '그릭요거트 볼', category: '샐러드', kcal: 300, carbG: 38, proteinG: 15, fatG: 9, sodiumMg: 80),
+
+    // ───── 음료 ─────
+    FoodItem(name: '콜라 500ml', category: '음료', kcal: 210, carbG: 54, proteinG: 0, fatG: 0, sodiumMg: 20),
+    FoodItem(name: '제로 콜라 500ml', category: '음료', kcal: 0, carbG: 0, proteinG: 0, fatG: 0, sodiumMg: 30),
+    FoodItem(name: '아메리카노', category: '음료', kcal: 10, carbG: 2, proteinG: 0, fatG: 0, sodiumMg: 5),
+    FoodItem(name: '카페라떼', category: '음료', kcal: 180, carbG: 15, proteinG: 8, fatG: 9, sodiumMg: 120),
+    FoodItem(name: '버블티(밀크티)', category: '음료', kcal: 400, carbG: 70, proteinG: 4, fatG: 10, sodiumMg: 150),
+    FoodItem(name: '에너지드링크', category: '음료', kcal: 110, carbG: 27, proteinG: 0, fatG: 0, sodiumMg: 100),
+    FoodItem(name: '이온음료 500ml', category: '음료', kcal: 130, carbG: 32, proteinG: 0, fatG: 0, sodiumMg: 200),
+    FoodItem(name: '물', category: '음료', kcal: 0, carbG: 0, proteinG: 0, fatG: 0, sodiumMg: 0),
+
+    // ───── 간식 ─────
+    FoodItem(name: '과자 1봉지', category: '간식', kcal: 350, carbG: 45, proteinG: 4, fatG: 17, sodiumMg: 350),
+    FoodItem(name: '초코바', category: '간식', kcal: 250, carbG: 32, proteinG: 4, fatG: 12, sodiumMg: 100),
+    FoodItem(name: '아이스크림', category: '간식', kcal: 220, carbG: 28, proteinG: 4, fatG: 10, sodiumMg: 70),
+    FoodItem(name: '붕어빵 2개', category: '간식', kcal: 300, carbG: 60, proteinG: 6, fatG: 4, sodiumMg: 200),
+    FoodItem(name: '견과류 한 줌', category: '간식', kcal: 170, carbG: 6, proteinG: 5, fatG: 15, sodiumMg: 5),
+    FoodItem(name: '사과 1개', category: '간식', kcal: 95, carbG: 25, proteinG: 0, fatG: 0, sodiumMg: 2),
+
+    // ───── 추가 (추천 다양성용) ─────
+    FoodItem(name: '순두부찌개 백반', category: '밥', kcal: 560, carbG: 80, proteinG: 24, fatG: 14, sodiumMg: 1600),
+    FoodItem(name: '닭갈비덮밥', category: '밥', kcal: 720, carbG: 96, proteinG: 34, fatG: 18, sodiumMg: 1400),
+    FoodItem(name: '소고기국밥', category: '밥', kcal: 600, carbG: 78, proteinG: 30, fatG: 15, sodiumMg: 1800),
+    FoodItem(name: '곤드레밥 정식', category: '밥', kcal: 520, carbG: 88, proteinG: 16, fatG: 8, sodiumMg: 1000),
+    FoodItem(name: '오므라이스', category: '밥', kcal: 700, carbG: 92, proteinG: 22, fatG: 24, sodiumMg: 1200),
+    FoodItem(name: '스팸마요덮밥', category: '밥', kcal: 780, carbG: 96, proteinG: 22, fatG: 32, sodiumMg: 1700),
+    FoodItem(name: '닭가슴살 덮밥', category: '밥', kcal: 580, carbG: 85, proteinG: 38, fatG: 8, sodiumMg: 900),
+    FoodItem(name: '훈제오리 정식', category: '밥', kcal: 750, carbG: 80, proteinG: 38, fatG: 30, sodiumMg: 1300),
+    FoodItem(name: '생선구이 정식', category: '밥', kcal: 600, carbG: 82, proteinG: 34, fatG: 14, sodiumMg: 1200),
+    FoodItem(name: '쌀국수', category: '면', kcal: 520, carbG: 85, proteinG: 22, fatG: 8, sodiumMg: 1600),
+    FoodItem(name: '마라탕(보통)', category: '면', kcal: 750, carbG: 60, proteinG: 30, fatG: 40, sodiumMg: 2600),
+    FoodItem(name: '비빔국수', category: '면', kcal: 560, carbG: 100, proteinG: 14, fatG: 10, sodiumMg: 1400),
+    FoodItem(name: '메밀소바', category: '면', kcal: 480, carbG: 90, proteinG: 16, fatG: 4, sodiumMg: 1500),
+    FoodItem(name: '김치볶음밥', category: '밥', kcal: 650, carbG: 90, proteinG: 15, fatG: 22, sodiumMg: 1500),
+    FoodItem(name: '치즈김밥 1줄', category: '밥', kcal: 540, carbG: 72, proteinG: 17, fatG: 19, sodiumMg: 1050),
+    FoodItem(name: '떡볶이+계란', category: '분식', kcal: 560, carbG: 96, proteinG: 15, fatG: 11, sodiumMg: 1400),
+    FoodItem(name: '토스트(계란햄)', category: '분식', kcal: 420, carbG: 45, proteinG: 16, fatG: 19, sodiumMg: 800),
+    FoodItem(name: '치킨 샐러드 랩', category: '패스트푸드', kcal: 420, carbG: 40, proteinG: 24, fatG: 18, sodiumMg: 850),
+    FoodItem(name: '서브웨이 15cm(닭가슴살)', category: '패스트푸드', kcal: 380, carbG: 46, proteinG: 26, fatG: 9, sodiumMg: 800),
+    FoodItem(name: '그릴치킨 버거', category: '패스트푸드', kcal: 450, carbG: 48, proteinG: 28, fatG: 15, sodiumMg: 900),
+    FoodItem(name: '편의점 닭가슴살 샐러드', category: '편의점', kcal: 260, carbG: 18, proteinG: 26, fatG: 9, sodiumMg: 550),
+    FoodItem(name: '단백질 바', category: '편의점', kcal: 200, carbG: 22, proteinG: 15, fatG: 7, sodiumMg: 150),
+    FoodItem(name: '단백질 음료', category: '편의점', kcal: 150, carbG: 12, proteinG: 20, fatG: 3, sodiumMg: 200),
+    FoodItem(name: '컵밥(제육)', category: '편의점', kcal: 520, carbG: 78, proteinG: 18, fatG: 14, sodiumMg: 1200),
+    FoodItem(name: '두유 200ml', category: '편의점', kcal: 120, carbG: 12, proteinG: 7, fatG: 5, sodiumMg: 120),
+    FoodItem(name: '오트밀 컵', category: '편의점', kcal: 220, carbG: 38, proteinG: 8, fatG: 4, sodiumMg: 150),
+    FoodItem(name: '고구마 1개', category: '편의점', kcal: 160, carbG: 37, proteinG: 2, fatG: 0, sodiumMg: 20),
+    FoodItem(name: '떠먹는 요거트', category: '편의점', kcal: 110, carbG: 15, proteinG: 4, fatG: 3, sodiumMg: 60),
+    FoodItem(name: '소고기 포케', category: '샐러드', kcal: 580, carbG: 62, proteinG: 32, fatG: 20, sodiumMg: 750),
+    FoodItem(name: '새우 샐러드', category: '샐러드', kcal: 340, carbG: 20, proteinG: 28, fatG: 15, sodiumMg: 650),
+    FoodItem(name: '리코타 샐러드', category: '샐러드', kcal: 420, carbG: 30, proteinG: 14, fatG: 26, sodiumMg: 550),
+    FoodItem(name: '닭가슴살 샌드위치', category: '샐러드', kcal: 400, carbG: 42, proteinG: 26, fatG: 13, sodiumMg: 700),
+    FoodItem(name: '딸기 요거트 스무디', category: '음료', kcal: 230, carbG: 40, proteinG: 8, fatG: 4, sodiumMg: 90),
+    FoodItem(name: '방울토마토 한 팩', category: '간식', kcal: 45, carbG: 9, proteinG: 2, fatG: 0, sodiumMg: 10),
+    FoodItem(name: '군고구마+우유', category: '간식', kcal: 285, carbG: 47, proteinG: 8, fatG: 7, sodiumMg: 120),
+
+    // ═══════ 아침에 많이 먹는 것 (fix42) ═══════
+    FoodItem(name: '토스트(잼+버터) 2장', category: '간식', kcal: 350, carbG: 52, proteinG: 7, fatG: 13, sodiumMg: 380),
+    FoodItem(name: '식빵 1장+계란후라이', category: '간식', kcal: 230, carbG: 24, proteinG: 10, fatG: 10, sodiumMg: 320),
+    FoodItem(name: '시리얼+우유', category: '간식', kcal: 320, carbG: 55, proteinG: 10, fatG: 7, sodiumMg: 300),
+    FoodItem(name: '그래놀라+요거트', category: '간식', kcal: 380, carbG: 52, proteinG: 12, fatG: 14, sodiumMg: 120),
+    FoodItem(name: '계란후라이 2개+밥', category: '밥', kcal: 480, carbG: 68, proteinG: 18, fatG: 14, sodiumMg: 450),
+    FoodItem(name: '계란말이+밥', category: '밥', kcal: 520, carbG: 70, proteinG: 20, fatG: 16, sodiumMg: 650),
+    FoodItem(name: '스크램블에그+토스트', category: '간식', kcal: 410, carbG: 32, proteinG: 18, fatG: 23, sodiumMg: 520),
+    FoodItem(name: '누룽지(한 그릇)', category: '밥', kcal: 260, carbG: 56, proteinG: 5, fatG: 1, sodiumMg: 10),
+    FoodItem(name: '흰죽 한 그릇', category: '밥', kcal: 220, carbG: 48, proteinG: 4, fatG: 0, sodiumMg: 300),
+    FoodItem(name: '소고기죽', category: '밥', kcal: 380, carbG: 55, proteinG: 18, fatG: 8, sodiumMg: 900),
+    FoodItem(name: '전복죽', category: '밥', kcal: 360, carbG: 54, proteinG: 16, fatG: 7, sodiumMg: 850),
+    FoodItem(name: '단팥빵 1개', category: '간식', kcal: 290, carbG: 55, proteinG: 7, fatG: 5, sodiumMg: 200),
+    FoodItem(name: '크림빵 1개', category: '간식', kcal: 330, carbG: 45, proteinG: 6, fatG: 14, sodiumMg: 250),
+    FoodItem(name: '소금빵 1개', category: '간식', kcal: 310, carbG: 38, proteinG: 6, fatG: 15, sodiumMg: 420),
+    FoodItem(name: '크로와상 1개', category: '간식', kcal: 300, carbG: 32, proteinG: 6, fatG: 17, sodiumMg: 330),
+    FoodItem(name: '베이글+크림치즈', category: '간식', kcal: 420, carbG: 58, proteinG: 13, fatG: 15, sodiumMg: 600),
+    FoodItem(name: '에그마요 샌드위치', category: '편의점', kcal: 380, carbG: 40, proteinG: 13, fatG: 19, sodiumMg: 650),
+    FoodItem(name: '햄치즈 샌드위치', category: '편의점', kcal: 360, carbG: 38, proteinG: 16, fatG: 15, sodiumMg: 800),
+    FoodItem(name: '핫바 1개', category: '편의점', kcal: 200, carbG: 14, proteinG: 10, fatG: 11, sodiumMg: 600),
+    FoodItem(name: '구운계란 2개', category: '편의점', kcal: 150, carbG: 1, proteinG: 13, fatG: 10, sodiumMg: 260),
+    FoodItem(name: '바나나우유', category: '음료', kcal: 210, carbG: 34, proteinG: 6, fatG: 6, sodiumMg: 100),
+    FoodItem(name: '딸기우유', category: '음료', kcal: 200, carbG: 32, proteinG: 6, fatG: 5, sodiumMg: 100),
+    FoodItem(name: '초코우유', category: '음료', kcal: 220, carbG: 35, proteinG: 7, fatG: 6, sodiumMg: 120),
+    FoodItem(name: '요거트 음료(작은 병)', category: '음료', kcal: 90, carbG: 18, proteinG: 2, fatG: 1, sodiumMg: 40),
+    FoodItem(name: '오렌지주스 200ml', category: '음료', kcal: 95, carbG: 22, proteinG: 1, fatG: 0, sodiumMg: 5),
+    FoodItem(name: '미숫가루 한 잔', category: '음료', kcal: 230, carbG: 40, proteinG: 7, fatG: 5, sodiumMg: 80),
+    FoodItem(name: '사과 1개+땅콩버터', category: '간식', kcal: 290, carbG: 36, proteinG: 7, fatG: 16, sodiumMg: 90),
+
+    // ═══════ 점심에 많이 먹는 것 (급식·학원가·편의점) (fix42) ═══════
+    FoodItem(name: '급식 한 판(밥+국+반찬3)', category: '밥', kcal: 750, carbG: 105, proteinG: 30, fatG: 20, sodiumMg: 1800),
+    FoodItem(name: '제육볶음+밥', category: '밥', kcal: 780, carbG: 90, proteinG: 34, fatG: 28, sodiumMg: 1500),
+    FoodItem(name: '닭볶음탕+밥', category: '밥', kcal: 720, carbG: 85, proteinG: 38, fatG: 22, sodiumMg: 1600),
+    FoodItem(name: '불고기+밥', category: '밥', kcal: 700, carbG: 88, proteinG: 32, fatG: 20, sodiumMg: 1300),
+    FoodItem(name: '돼지갈비+밥', category: '밥', kcal: 850, carbG: 90, proteinG: 36, fatG: 34, sodiumMg: 1500),
+    FoodItem(name: '떡갈비+밥', category: '밥', kcal: 760, carbG: 88, proteinG: 30, fatG: 28, sodiumMg: 1300),
+    FoodItem(name: '함박스테이크 정식', category: '밥', kcal: 820, carbG: 85, proteinG: 32, fatG: 36, sodiumMg: 1200),
+    FoodItem(name: '치즈돈까스', category: '밥', kcal: 1000, carbG: 95, proteinG: 40, fatG: 48, sodiumMg: 1500),
+    FoodItem(name: '가츠동(돈까스덮밥)', category: '밥', kcal: 850, carbG: 100, proteinG: 32, fatG: 32, sodiumMg: 1400),
+    FoodItem(name: '오야코동(닭고기덮밥)', category: '밥', kcal: 650, carbG: 90, proteinG: 30, fatG: 16, sodiumMg: 1200),
+    FoodItem(name: '마파두부덮밥', category: '밥', kcal: 680, carbG: 88, proteinG: 24, fatG: 24, sodiumMg: 1400),
+    FoodItem(name: '잡채밥', category: '밥', kcal: 720, carbG: 110, proteinG: 16, fatG: 20, sodiumMg: 1300),
+    FoodItem(name: '짜장밥', category: '밥', kcal: 820, carbG: 120, proteinG: 20, fatG: 26, sodiumMg: 1500),
+    FoodItem(name: '김치볶음밥+계란', category: '밥', kcal: 720, carbG: 92, proteinG: 20, fatG: 28, sodiumMg: 1500),
+    FoodItem(name: '돌솥비빔밥', category: '밥', kcal: 700, carbG: 95, proteinG: 22, fatG: 22, sodiumMg: 1200),
+    FoodItem(name: '알밥', category: '밥', kcal: 620, carbG: 90, proteinG: 20, fatG: 18, sodiumMg: 1000),
+    FoodItem(name: '유부초밥 8개', category: '밥', kcal: 520, carbG: 85, proteinG: 14, fatG: 13, sodiumMg: 900),
+    FoodItem(name: '초밥 10개', category: '밥', kcal: 560, carbG: 90, proteinG: 26, fatG: 8, sodiumMg: 1100),
+    FoodItem(name: '꼬마김밥 5줄', category: '밥', kcal: 480, carbG: 78, proteinG: 12, fatG: 12, sodiumMg: 900),
+    FoodItem(name: '돈까스김밥 1줄', category: '밥', kcal: 600, carbG: 75, proteinG: 20, fatG: 24, sodiumMg: 1100),
+    FoodItem(name: '뚝배기불고기', category: '밥', kcal: 720, carbG: 90, proteinG: 34, fatG: 22, sodiumMg: 1600),
+    FoodItem(name: '부대찌개+밥', category: '밥', kcal: 780, carbG: 90, proteinG: 30, fatG: 32, sodiumMg: 2300),
+    FoodItem(name: '뼈해장국+밥', category: '밥', kcal: 700, carbG: 85, proteinG: 38, fatG: 22, sodiumMg: 1900),
+    FoodItem(name: '설렁탕+밥', category: '밥', kcal: 620, carbG: 80, proteinG: 34, fatG: 18, sodiumMg: 1500),
+    FoodItem(name: '갈비탕+밥', category: '밥', kcal: 680, carbG: 82, proteinG: 38, fatG: 22, sodiumMg: 1600),
+    FoodItem(name: '육개장+밥', category: '밥', kcal: 650, carbG: 82, proteinG: 32, fatG: 20, sodiumMg: 2000),
+    FoodItem(name: '순대국+밥', category: '밥', kcal: 700, carbG: 85, proteinG: 34, fatG: 24, sodiumMg: 1800),
+    FoodItem(name: '감자탕(1인)+밥', category: '밥', kcal: 760, carbG: 88, proteinG: 40, fatG: 26, sodiumMg: 1900),
+    FoodItem(name: '마라샹궈(1인)', category: '밥', kcal: 900, carbG: 60, proteinG: 40, fatG: 52, sodiumMg: 2200),
+    FoodItem(name: '돈코츠라멘', category: '면', kcal: 750, carbG: 90, proteinG: 30, fatG: 28, sodiumMg: 2300),
+    FoodItem(name: '카레우동', category: '면', kcal: 620, carbG: 95, proteinG: 18, fatG: 16, sodiumMg: 1800),
+    FoodItem(name: '어묵우동', category: '면', kcal: 520, carbG: 88, proteinG: 20, fatG: 8, sodiumMg: 2000),
+    FoodItem(name: '김치우동', category: '면', kcal: 540, carbG: 90, proteinG: 16, fatG: 10, sodiumMg: 2100),
+    FoodItem(name: '쫄면', category: '면', kcal: 620, carbG: 110, proteinG: 14, fatG: 12, sodiumMg: 1400),
+    FoodItem(name: '막국수', category: '면', kcal: 560, carbG: 100, proteinG: 16, fatG: 9, sodiumMg: 1300),
+    FoodItem(name: '콩국수', category: '면', kcal: 600, carbG: 85, proteinG: 26, fatG: 18, sodiumMg: 900),
+    FoodItem(name: '볶음우동', category: '면', kcal: 680, carbG: 95, proteinG: 20, fatG: 24, sodiumMg: 1700),
+    FoodItem(name: '탕수육(소)+짜장면', category: '면', kcal: 1300, carbG: 160, proteinG: 40, fatG: 52, sodiumMg: 2100),
+    FoodItem(name: '로제떡볶이 1인분', category: '분식', kcal: 650, carbG: 95, proteinG: 14, fatG: 22, sodiumMg: 1500),
+    FoodItem(name: '치즈떡볶이 1인분', category: '분식', kcal: 620, carbG: 95, proteinG: 16, fatG: 18, sodiumMg: 1500),
+    FoodItem(name: '떡볶이+순대+튀김 세트', category: '분식', kcal: 1050, carbG: 160, proteinG: 24, fatG: 34, sodiumMg: 2300),
+    FoodItem(name: '김치전 1장', category: '분식', kcal: 420, carbG: 48, proteinG: 8, fatG: 22, sodiumMg: 900),
+    FoodItem(name: '닭강정 중박스(혼자)', category: '패스트푸드', kcal: 900, carbG: 70, proteinG: 45, fatG: 48, sodiumMg: 1600),
+    FoodItem(name: '양념치킨 3조각', category: '패스트푸드', kcal: 800, carbG: 48, proteinG: 42, fatG: 48, sodiumMg: 1400),
+    FoodItem(name: '싸이버거 세트', category: '패스트푸드', kcal: 1050, carbG: 120, proteinG: 32, fatG: 48, sodiumMg: 1700),
+    FoodItem(name: '와퍼 세트', category: '패스트푸드', kcal: 1150, carbG: 125, proteinG: 35, fatG: 55, sodiumMg: 1800),
+    FoodItem(name: '피자 1판(R) 혼자', category: '패스트푸드', kcal: 1900, carbG: 200, proteinG: 80, fatG: 85, sodiumMg: 3500),
+    FoodItem(name: '서브웨이 30cm', category: '패스트푸드', kcal: 760, carbG: 92, proteinG: 44, fatG: 24, sodiumMg: 1800),
+    FoodItem(name: '밥버거(제육)', category: '편의점', kcal: 520, carbG: 72, proteinG: 16, fatG: 18, sodiumMg: 900),
+    FoodItem(name: '컵밥(스팸)', category: '편의점', kcal: 580, carbG: 80, proteinG: 16, fatG: 22, sodiumMg: 1300),
+    FoodItem(name: '큰 컵라면+삼각김밥', category: '편의점', kcal: 700, carbG: 115, proteinG: 16, fatG: 20, sodiumMg: 2400),
+    FoodItem(name: '편의점 샐러드 파스타', category: '편의점', kcal: 420, carbG: 60, proteinG: 14, fatG: 14, sodiumMg: 900),
+  ];
+
+  /// 검색: 글자가 들어가는 음식만 골라내기
+  static List<FoodItem> search(String query, {String category = '전체'}) {
+    final q = query.trim();
+    return all.where((f) {
+      final okCategory = category == '전체' || f.category == category;
+      final okQuery = q.isEmpty || f.name.contains(q);
+      return okCategory && okQuery;
+    }).toList();
+  }
+}
