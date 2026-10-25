@@ -37,6 +37,7 @@ git add -A && git commit -m "뭘 고쳤는지" && git push
 | `KAKAO_REST_API_KEY` | 카카오 REST API 키 |
 | `KAKAO_JS_KEY` | 카카오 JavaScript 키 |
 | `CLAUDE_API_KEY` | (선택) Claude 키 |
+| `EMAILJS_SERVICE_ID` · `EMAILJS_TEMPLATE_ID` · `EMAILJS_PUBLIC_KEY` | (선택) 리포트를 앱에서 바로 메일 발송하려면 (emailjs.com). 없으면 메일 앱 열기·공유로 동작 |
 
 넣은 뒤 Actions 탭에서 "Run workflow"를 한 번 눌러주면 바로 반영돼요.
 ⚠️ 웹앱에 들어간 키는 주소를 아는 사람이 볼 수 있어요. 카카오 개발자 사이트 → 플랫폼 → Web 에

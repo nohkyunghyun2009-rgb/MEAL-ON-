@@ -183,35 +183,39 @@ class HealthReportScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // ───── ⑦ 리포트 내보내기 (이메일 / CSV) ─────
-          const SectionTitle('리포트 저장하기', subtitle: '표로 정리해서 이메일로 받거나 엑셀 파일로 내려받아요'),
+          // ───── ⑦ 리포트 내보내기 (이메일 / 공유 / CSV) ─────
+          const SectionTitle('리포트 저장하기', subtitle: '표로 정리해서 메일로 보내거나, 공유하거나, 엑셀 파일로 내려받아요'),
           Row(
             children: [
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () => _sendEmail(context, p),
                   icon: const Icon(Icons.mail_outline_rounded),
-                  label: const Text('이메일로 받기'),
+                  label: Text(ReportMailer.realSend ? '이메일로 받기' : '메일로 보내기'),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => _downloadCsv(context, app.history),
-                  icon: const Icon(Icons.table_chart_outlined),
-                  label: const Text('CSV 다운로드'),
+                  onPressed: () => _share(context, p),
+                  icon: const Icon(Icons.ios_share_rounded),
+                  label: const Text('공유하기'),
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () => _downloadCsv(context, app.history),
+            icon: const Icon(Icons.table_chart_outlined),
+            label: const Text('CSV(엑셀) 다운로드'),
           ),
           const SizedBox(height: 6),
           Text(
             ReportMailer.realSend
                 ? '로그인한 이메일로 표가 담긴 메일이 바로 발송돼요.'
-                : '⚠️ 아직 발송 설정 전이에요 (${ReportMailer.missingKeys.join(' · ')} 비어 있음). 버튼을 누르면 설정 방법이 떠요.',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: ReportMailer.realSend ? null : AppColors.coral,
-                ),
+                : '메일 앱이 열리고 리포트가 채워져요. 받는 사람은 바꿔도 돼요. "공유하기"는 카톡·메모로 바로 보낼 수 있어요.',
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 20),
 
@@ -226,16 +230,30 @@ class HealthReportScreen extends StatelessWidget {
     );
   }
 
-  /// 이메일 버튼: 키 있으면 진짜 발송, 없으면 "설정 방법" 안내창
-  Future<void> _sendEmail(BuildContext context, BodyProfile p) async {
-    final email = context.read<AuthService>().email;
+  /// 공유 버튼: 폰이면 공유 창(카톡·메모·메일…), PC면 글 복사
+  Future<void> _share(BuildContext context, BodyProfile p) async {
     final messenger = ScaffoldMessenger.of(context);
-    if (email == null || email.isEmpty) {
-      messenger.showSnackBar(const SnackBar(content: Text('로그인한 이메일이 없어요. 로그아웃 후 이메일로 다시 로그인해요.')));
+    final shared = await ReportMailer.share(p);
+    if (shared) return;
+    await Clipboard.setData(ClipboardData(text: ReportMailer.asText(p)));
+    messenger.showSnackBar(const SnackBar(content: Text('이 기기는 공유 창이 없어서 리포트 글을 복사했어요. 원하는 곳에 붙여넣기 하면 돼요 📋')));
+  }
+
+  /// 이메일 버튼: EmailJS 키 있으면 바로 발송, 없으면 내 메일 앱을 열어 본문을 채워줘요
+  Future<void> _sendEmail(BuildContext context, BodyProfile p) async {
+    final email = context.read<AuthService>().email ?? '';
+    final messenger = ScaffoldMessenger.of(context);
+    if (!ReportMailer.realSend) {
+      try {
+        await ReportMailer.openMailApp(toEmail: email, p: p);
+      } catch (_) {
+        await Clipboard.setData(ClipboardData(text: ReportMailer.asText(p)));
+        messenger.showSnackBar(const SnackBar(content: Text('메일 앱을 못 열어서 리포트 글을 복사했어요. 메일에 붙여넣기 하면 돼요 📋')));
+      }
       return;
     }
-    if (!ReportMailer.realSend) {
-      await _showSetupDialog(context, email, p);
+    if (email.isEmpty) {
+      messenger.showSnackBar(const SnackBar(content: Text('로그인한 이메일이 없어요. 로그아웃 후 이메일로 다시 로그인해요.')));
       return;
     }
     messenger.showSnackBar(SnackBar(content: Text('$email 로 보내는 중...')));
@@ -267,59 +285,6 @@ class HealthReportScreen extends StatelessWidget {
         ),
       );
     }
-  }
-
-  /// EmailJS 키가 아직 없을 때: 뭘 해야 하는지 + 당장 쓸 수 있는 대안 2개
-  Future<void> _showSetupDialog(BuildContext context, String email, BodyProfile p) async {
-    final messenger = ScaffoldMessenger.of(context);
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('메일 발송 설정이 아직 안 됐어요'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('비어 있는 키: ${ReportMailer.missingKeys.join(', ')}',
-                  style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.coral)),
-              const SizedBox(height: 10),
-              const Text(
-                '앱에서 바로 발송하려면 무료 메일 서비스(EmailJS) 키 3개가 필요해요.\n'
-                '1) emailjs.com 가입 → Email Services 에서 Gmail 연결 → Service ID\n'
-                '2) Email Templates → 새 템플릿 → To Email 칸에 {{to_email}} → Template ID\n'
-                '3) Account → General → Public Key\n'
-                '4) 세 개를 lib/config/email_keys.dart 에 붙여넣고 앱 재시작',
-                style: TextStyle(height: 1.5),
-              ),
-              const SizedBox(height: 10),
-              Text('지금은 아래 방법으로 $email 에 보낼 수 있어요:', style: Theme.of(ctx).textTheme.bodySmall),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              await Clipboard.setData(ClipboardData(text: ReportMailer.asText(p)));
-              if (ctx.mounted) Navigator.pop(ctx);
-              messenger.showSnackBar(const SnackBar(content: Text('리포트 글을 복사했어요. 메일에 붙여넣기 하면 돼요 📋')));
-            },
-            child: const Text('리포트 복사'),
-          ),
-          FilledButton(
-            onPressed: () async {
-              if (ctx.mounted) Navigator.pop(ctx);
-              try {
-                await ReportMailer.openMailApp(toEmail: email, p: p);
-              } catch (e) {
-                messenger.showSnackBar(SnackBar(content: Text('$e')));
-              }
-            },
-            child: const Text('메일 앱으로 열기'),
-          ),
-        ],
-      ),
-    );
   }
 
   /// CSV 버튼: 측정 기록 전부를 엑셀 파일로

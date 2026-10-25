@@ -201,6 +201,9 @@ class ReportMailer {
   static String _encodeQuery(Map<String, String> params) =>
       params.entries.map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}').join('&');
 
+  /// 폰 공유 창으로 리포트 글 보내기 (카톡·메모·메일…). 지원 안 되면 false → 호출한 쪽에서 복사로 대신해요
+  static Future<bool> share(BodyProfile p) => shareText('[MEAL:ON] ${p.nickname}님의 몸 리포트', asText(p));
+
   // ─────────────────────────────────────────────────────────
   //  ② CSV 다운로드
   // ─────────────────────────────────────────────────────────
