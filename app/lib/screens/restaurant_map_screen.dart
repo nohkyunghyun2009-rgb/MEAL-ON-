@@ -72,6 +72,11 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
   List<Place> _places = [];
   bool _loading = false;
   String? _error;
+
+  // 지도 접기/펼치기 — 폰에서는 지도가 화면을 다 차지해서 식당이 한 개밖에 안 보였어요.
+  // 목록을 아래로 밀면 자동으로 접히고, 맨 위로 올리면 다시 펼쳐져요. 버튼으로도 조절돼요.
+  bool _mapOpen = true;
+  final _listScroll = ScrollController();
   // 학원가 안에서 못 찾아서 근처(1.5km)까지 넓혀 찾았는지
   bool _widened = false;
   static const _widenRadiusM = 1500;
@@ -102,12 +107,21 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
   @override
   void initState() {
     super.initState();
+    _listScroll.addListener(_onListScroll);
     _locateThenSearch();
+  }
+
+  void _onListScroll() {
+    if (!_listScroll.hasClients) return;
+    final y = _listScroll.offset;
+    if (y > 48 && _mapOpen) setState(() => _mapOpen = false);
+    if (y <= 0 && !_mapOpen) setState(() => _mapOpen = true);
   }
 
   @override
   void dispose() {
     _keyword.dispose();
+    _listScroll.dispose();
     _mapController.dispose();
     super.dispose();
   }
@@ -399,15 +413,17 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
 
-          // ───── 지도 ─────
+          // ───── 지도 (폰에선 작게, 접을 수 있게) ─────
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(22),
-              child: SizedBox(
-                height: 250,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOut,
+                height: _mapOpen ? (MediaQuery.of(context).size.height < 760 ? 170.0 : 210.0) : 0.0,
                 child: Stack(
                   children: [
                     FlutterMap(
@@ -470,6 +486,25 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
             ),
           ),
 
+          // 지도 접기/펼치기 손잡이
+          SizedBox(
+            height: 32,
+            child: Center(
+              child: TextButton.icon(
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  minimumSize: const Size(0, 28),
+                  foregroundColor: AppColors.muted,
+                  textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () => setState(() => _mapOpen = !_mapOpen),
+                icon: Icon(_mapOpen ? Icons.keyboard_arrow_up_rounded : Icons.map_rounded, size: 18),
+                label: Text(_mapOpen ? '지도 접기' : '지도 보기'),
+              ),
+            ),
+          ),
+
           // ───── 목록 ─────
           Expanded(
             child: _loading
@@ -493,7 +528,8 @@ class _RestaurantMapScreenState extends State<RestaurantMapScreen> {
                               ),
                           ])
                         : ListView.separated(
-                            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+                            controller: _listScroll,
+                            padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
                             itemCount: _places.length + 1, // 맨 위 한 칸은 "N곳" 안내
                             separatorBuilder: (_, __) => const SizedBox(height: 8),
                             itemBuilder: (_, index) {
