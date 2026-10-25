@@ -5,6 +5,7 @@ import '../main.dart';
 import '../models/nutrition.dart';
 import '../services/auth_service.dart';
 import '../state/app_state.dart';
+import '../config/build_info.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_icon.dart';
 import '../widgets/body_summary_card.dart';
@@ -46,7 +47,14 @@ class MealLogScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('내 계정', style: Theme.of(context).textTheme.titleLarge),
+            Row(
+              children: [
+                Text('내 계정', style: Theme.of(context).textTheme.titleLarge),
+                const Spacer(),
+                // 앱 버전(빌드 시각) — QR 앱이 새 버전으로 바뀌었는지 여기서 확인해요
+                Text('v ${BuildInfo.stamp}', style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
             const SizedBox(height: 4),
             Text(auth.email ?? '', style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 16),

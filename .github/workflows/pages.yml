@@ -79,7 +79,11 @@ jobs:
 
       - name: 웹앱 빌드
         working-directory: app
-        run: flutter build web --release --base-href "/MEAL-ON-/app/"
+        # --pwa-strategy=none: 폰 브라우저가 옛 버전을 캐시에 붙들고 있지 않게 (항상 최신을 받아요)
+        # BUILD_STAMP: 앱 안 "내 계정"에 빌드 시각을 보여줘서 새 버전인지 확인할 수 있게
+        run: |
+          STAMP="$(TZ=Asia/Seoul date +'%m/%d %H:%M') · ${GITHUB_SHA::7}"
+          flutter build web --release --base-href "/MEAL-ON-/app/" --pwa-strategy=none --dart-define=BUILD_STAMP="$STAMP"
 
       - name: 사이트 + 앱 합치기
         run: |
