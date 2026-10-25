@@ -41,6 +41,9 @@ jobs:
           KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
           KAKAO_JS_KEY: ${{ secrets.KAKAO_JS_KEY }}
           CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
+          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
         run: |
           cp lib/config/app_keys.example.dart lib/config/app_keys.dart
           python3 - <<'PY'
@@ -56,6 +59,14 @@ jobs:
           put('kakaoJavascriptKey', os.environ.get('KAKAO_JS_KEY', ''))
           put('claudeApiKey', os.environ.get('CLAUDE_API_KEY', ''))
           open(p, 'w', encoding='utf-8').write(s)
+          # (선택) EmailJS 키가 있으면 리포트 메일이 앱에서 바로 발송돼요
+          e = 'lib/config/email_keys.dart'
+          s = open(e, encoding='utf-8').read()
+          for name, env in [('serviceId', 'EMAILJS_SERVICE_ID'), ('templateId', 'EMAILJS_TEMPLATE_ID'), ('publicKey', 'EMAILJS_PUBLIC_KEY')]:
+              v = os.environ.get(env, '')
+              if v:
+                  s = re.sub(r"(static const String %s = ')[^']*(';)" % name, lambda m: m.group(1) + v + m.group(2), s)
+          open(e, 'w', encoding='utf-8').write(s)
           missing = [n for n, v in [('GEMINI_API_KEY', os.environ.get('GEMINI_API_KEY')), ('KAKAO_REST_API_KEY', os.environ.get('KAKAO_REST_API_KEY')), ('KAKAO_JS_KEY', os.environ.get('KAKAO_JS_KEY'))] if not v]
           print('비어 있는 Secret:', missing or '없음 (전부 들어감)')
           PY

@@ -13,3 +13,13 @@ Future<void> downloadTextFile(String filename, String content) async {
     ..click();
   html.Url.revokeObjectUrl(url);
 }
+
+/// 폰의 "공유" 창(카톡·메모·메일·에어드롭…)을 띄워요. 지원 안 되는 브라우저(PC 등)면 false.
+Future<bool> shareText(String title, String text) async {
+  try {
+    await html.window.navigator.share({'title': title, 'text': text});
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
